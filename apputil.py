@@ -58,8 +58,15 @@ class Genius:
         return artist_data
     
     def get_artists(self, search_terms):
+        '''
+        Takes a list of artist search terms and returns a pandas DataFrame
+        containing information about each artist retrieved from the Genius API.
+        '''
+
+        # artists list that will be appended to
         artists = []
 
+        # for loop for each search term in the example
         for term in search_terms:
             artist_info = self.get_artist(term)
 
@@ -72,6 +79,7 @@ class Genius:
                 })
                 continue
             artist = artist_info.get("response", {}).get("artist", {})
+            # appends the search term, artist_name, artist_id, and followers (columns)
             artists.append({
                 "search_term": term,
                 "artist_name": artist.get("name"),
@@ -79,4 +87,5 @@ class Genius:
                 "followers_count": artist.get("followers_count")
             })
         
+        # returns the pandas dataframe of the data appended to 'artists'
         return pd.DataFrame(artists)
