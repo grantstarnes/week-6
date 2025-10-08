@@ -2,6 +2,7 @@
 from dotenv import load_dotenv
 import os
 import requests
+import pandas as pd
 class Genius:
     def __init__(self, access_token=None):
         '''
@@ -55,3 +56,27 @@ class Genius:
 
         # returns a dictionary of data for the searched artist
         return artist_data
+    
+    def get_artists(self, search_terms):
+        artists = []
+
+        for term in search_terms:
+            artist_info = self.get_artist(term)
+
+            if not artist_info:
+                artists.append({
+                    "search_term": term,
+                    "artist_name": None,
+                    "artist_id": None,
+                    "followers_count": None
+                })
+                continue
+            artist = artist_info.get("response", {}).get("artist", {})
+            artists.append({
+                "search_term": term,
+                "artist_name": artist.get("name"),
+                "artist_id": artist.get("id"),
+                "followers_count": artist.get("followers_count")
+            })
+        
+        return pd.DataFrame(artists)
